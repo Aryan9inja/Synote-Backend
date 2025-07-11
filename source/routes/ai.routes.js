@@ -6,7 +6,7 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router = Router();
 
 //secured routes
-router.route("/notes/:noteId/summarize").get(verifyJWT, getNoteSummary);
+router.route("/notes/:noteId/summarize").post(verifyJWT, getNoteSummary);
 router.route("/tasks/:id/summarize").get(verifyJWT, getTaskSummary);
 
 export default router;
