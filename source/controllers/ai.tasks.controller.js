@@ -18,9 +18,31 @@ export const getTaskSummary = asyncHandler(async (req, res) => {
     throw new apiError(400, "No valid subtasks available for summarization");
   }
 
+  const lastSummarizedAt = task.lastSummarizedAt || new Date(0);
+
+  const isTaskUpdated = new Date(task.updatedAt) > lastSummarizedAt;
+  const isSubtaskUpdated = subtasks.some(
+    (sub) => new Date(sub.updatedAt) > lastSummarizedAt
+  );
+
+  const shouldSummarize = isTaskUpdated || isSubtaskUpdated;
+
+  // Return cached if valid
+  if (!shouldSummarize && task.summary) {
+    return res.status(200).json(
+      new apiResponse(200, { summary: task.summary, cached: true }, "Summary (cached)")
+    );
+  }
+
+  // Generate new summary
   const summary = await summarizeTask(task.title, subtasks);
+
+  // Update the task with new summary
+  task.summary = summary;
+  task.lastSummarizedAt = new Date();
+  await task.save();
 
   return res
     .status(200)
-    .json(new apiResponse(200, { summary }, "Task summarized successfully"));
+    .json(new apiResponse(200, { summary, cached: false }, "Task summarized successfully"));
 });
