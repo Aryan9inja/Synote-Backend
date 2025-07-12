@@ -20,6 +20,12 @@ const taskSchema = new Schema(
       ref: "User",
       required: true,
     },
+    summary: {
+      type: String,
+    },
+    lastSummarizedAt: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
