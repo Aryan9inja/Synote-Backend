@@ -9,6 +9,7 @@ const options = {
   secure: true,
   sameSite: "None",
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  path: "/",
 };
 
 const generateAccessAndRefrehToken = async (userId) => {
@@ -181,14 +182,14 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     throw new apiError(401, "User not authenticated");
   }
 
-  const { _id, name, email,avatarImage } = req.user;
+  const { _id, name, email, avatarImage } = req.user;
 
   return res
     .status(200)
     .json(
       new apiResponse(
         200,
-        { user: { _id, name, email,avatarImage } },
+        { user: { _id, name, email, avatarImage } },
         "Current user fetched successfully"
       )
     );
